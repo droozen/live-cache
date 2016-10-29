@@ -1,11 +1,10 @@
 package com.roozen.core.dto;
 
+import org.apache.commons.lang.Validate;
 import org.apache.http.annotation.Immutable;
 
-import javax.validation.constraints.NotNull;
-
 @Immutable
-public class DataRequest {
+public final class DataRequest {
 
     private Action action;
     private Payload payload;
@@ -13,23 +12,25 @@ public class DataRequest {
 
     public DataRequest() { }
 
-    public DataRequest(@NotNull final Action action,
-                       @NotNull final Payload payload,
-                       @NotNull final Object data) {
+    public DataRequest(final Action action, final Payload payload, final Object data) {
+        Validate.notNull(action, "Missing action for request.");
+        Validate.notNull(payload, "Missing payload for request.");
+        Validate.notNull(data, "Missing data for request.");
+
         this.action = action;
         this.payload = payload;
         this.data = data;
     }
 
-    public Action getAction() {
+    public final Action getAction() {
         return action;
     }
 
-    public Payload getPayload() {
+    public final Payload getPayload() {
         return payload;
     }
 
-    public Object getData() {
+    public final Object getData() {
         return data;
     }
 }
