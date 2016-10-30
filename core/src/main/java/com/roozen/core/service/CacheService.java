@@ -13,32 +13,28 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class CacheService {
+public class CacheService extends AbstractDataHandler implements DataHandler {
 
-    @Autowired
-    DataService dataService;
+    private final Logger logger = Logger.getLogger(CacheService.class);
+    private final PublishSubject<DataRequest> handled = PublishSubject.create();
+    private final List<Action> acceptedActions = Arrays.asList(Action.CHECK, Action.CACHE, Action.RETRIEVE);
 
-    private Logger logger = Logger.getLogger(CacheService.class);
-    private PublishSubject<DataRequest> handled = PublishSubject.create();
-    private List<Action> acceptedActions = Arrays.asList(Action.CHECK, Action.CACHE, Action.RETRIEVE);
-
-    @PostConstruct
-    public void init() {
-        dataService.getBroker()
-                .filter(this::filterForCache)
-                .subscribe(
-                        request -> handled.onNext(request),
-                        throwable -> logger.warn("Unexpecte cache error.", throwable));
+    @Override
+    public void handleDataRequest(final DataRequest request) {
+        markHandled(request);
     }
 
-    private boolean filterForCache(final DataRequest request) {
-        return acceptedActions.contains(request.getAction());
+    @Override
+    public Logger getLogger() {
+        return logger;
     }
 
+    @Override
     public PublishSubject<DataRequest> getHandled() {
         return handled;
     }
 
+    @Override
     public List<Action> getAcceptedActions() {
         return new ArrayList<>(acceptedActions);
     }

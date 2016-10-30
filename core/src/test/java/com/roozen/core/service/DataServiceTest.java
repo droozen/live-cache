@@ -13,13 +13,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DataServiceTest {
 
-    private DataService service;
+    private DataRequestService service;
     private PublishSubject<DataRequest> broker;
     private AtomicInteger numReceived;
 
     @Before
     public void init() {
-        service = new DataService();
+        service = new DataRequestService();
         broker = service.getBroker();
         numReceived = new AtomicInteger();
     }

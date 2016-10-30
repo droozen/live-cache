@@ -10,24 +10,24 @@ import rx.subjects.PublishSubject;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class CacheServiceTest {
 
     private CacheService service;
-    private DataService dataService;
+    private DataRequestService dataService;
+
+    private PublishSubject<DataRequest> source = PublishSubject.create();
     private PublishSubject<DataRequest> broker;
     private PublishSubject<DataRequest> handled;
     private List<Action> acceptedActions;
 
     @Before
     public void init() {
-        dataService = new DataService();
+        dataService = new DataRequestService();
         service = new CacheService();
-        service.dataService = dataService;
+        service.service = dataService;
         broker = dataService.getBroker();
         handled = service.getHandled();
         acceptedActions = service.getAcceptedActions();
@@ -62,7 +62,7 @@ public class CacheServiceTest {
     }
 
     private DataRequest request(final Action action) {
-        return new DataRequest(action, new Payload(), new Object());
+        return new DataRequest(source, action, new Object());
     }
 
 }

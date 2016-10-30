@@ -3,6 +3,10 @@ package com.roozen.core.dto;
 public enum Action {
 
     /**
+     * Indicates back to the source that the request was handled.
+     */
+    HANDLED,
+    /**
      * Check if the requested data is already in the cache.
      */
     CHECK,
@@ -21,6 +25,14 @@ public enum Action {
     /**
      * Retrieve the data from the cache and serve.
      */
-    RETRIEVE;
+    RETRIEVE,
+    /**
+     * Indicates an error happened in processing.
+     */
+    ERROR,
+    /**
+     * Indicates an unknown action.
+     */
+    UNKNOWN;
 
 }
