@@ -15,17 +15,21 @@ public enum Action {
      */
     FETCH,
     /**
-     * Put the data in the cache.
-     */
-    CACHE,
-    /**
      * Store the data with persistence.
      */
     STORE,
     /**
+     * Put the data in the cache.
+     */
+    CACHE,
+    /**
      * Retrieve the data from the cache and serve.
      */
     RETRIEVE,
+    /**
+     * Found the requested object.
+     */
+    FOUND,
     /**
      * Indicates an error happened in processing.
      */

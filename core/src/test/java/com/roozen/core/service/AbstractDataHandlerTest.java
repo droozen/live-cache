@@ -2,6 +2,7 @@ package com.roozen.core.service;
 
 import com.roozen.core.dto.Action;
 import com.roozen.core.dto.DataRequest;
+import com.roozen.core.dto.Payload;
 import rx.subjects.PublishSubject;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public abstract class AbstractDataHandlerTest {
     protected abstract PublishSubject<DataRequest> getSource();
 
     protected DataRequest request(final Action action) {
-        return new DataRequest(getSource(), action, new Object());
+        return new DataRequest(getSource(), action, new MockPayload());
     }
 
     protected AtomicInteger subscribeToHandledAndAssertAccepted() {
@@ -36,5 +37,18 @@ public abstract class AbstractDataHandlerTest {
         final AtomicInteger numReceived = new AtomicInteger();
         getBroker().subscribe(request -> numReceived.getAndIncrement());
         return numReceived;
+    }
+
+    class MockPayload implements Payload {
+
+        @Override
+        public String getKey() {
+            return null;
+        }
+
+        @Override
+        public Object getData() {
+            return null;
+        }
     }
 }

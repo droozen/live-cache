@@ -4,29 +4,40 @@ import org.apache.commons.lang.Validate;
 import org.apache.http.annotation.Immutable;
 import rx.subjects.PublishSubject;
 
+import java.util.LinkedHashSet;
+import java.util.Stack;
+import java.util.UUID;
+import java.util.stream.Stream;
+
 @Immutable
 public final class DataRequest {
 
     private static final PublishSubject<DataRequest> GENERIC_SOURCE = PublishSubject.create();
-    private static final Object GENERIC_DATA = new Object();
+    private static final Payload GENERIC_DATA = new StringKeyValuePair("", "");
 
+    private String sourceKey = UUID.randomUUID().toString();
     private PublishSubject<DataRequest> source = GENERIC_SOURCE;
     private Action action = Action.ERROR;
-    private Object data = GENERIC_DATA;
+    private Payload payload = GENERIC_DATA;
+    private Stack<String> stack = new Stack<>();
 
     public DataRequest() { }
 
-    public DataRequest(final PublishSubject<DataRequest> source, final Action action, final Object data) {
+    public DataRequest(final PublishSubject<DataRequest> source, final Action action, final Payload payload) {
         Validate.notNull(source, "Missing source for data request.");
         Validate.notNull(action, "Missing action for data request.");
-        Validate.notNull(data, "Missing data for data request.");
+        Validate.notNull(payload, "Missing data for data request.");
 
         this.source = source;
         this.action = action;
-        this.data = data;
+        this.payload = payload;
     }
 
-    public PublishSubject<DataRequest> getSource() {
+    public final String getSourceKey() {
+        return sourceKey;
+    }
+
+    public final PublishSubject<DataRequest> getSource() {
         return source;
     }
 
@@ -34,7 +45,26 @@ public final class DataRequest {
         return action;
     }
 
-    public final Object getData() {
-        return data;
+    public final void setAction(final Action action) {
+        this.action = action;
     }
+
+    public final Payload getPayload() {
+        return payload;
+    }
+
+    public final void setPayload(final Payload payload) {
+        this.payload = payload;
+    }
+
+    public final Stream<String> getStackStream() {
+        return stack.stream();
+    }
+
+    public final void addStack(final String trace) {
+        if (trace != null) {
+            stack.add(trace);
+        }
+    }
+
 }

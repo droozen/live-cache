@@ -2,7 +2,6 @@ package com.roozen.core.service;
 
 import com.roozen.core.dto.Action;
 import com.roozen.core.dto.DataRequest;
-import com.roozen.core.dto.Payload;
 import org.junit.Before;
 import org.junit.Test;
 import rx.subjects.PublishSubject;

@@ -1,19 +1,21 @@
 package com.roozen.core.dto;
 
-import org.apache.http.annotation.Immutable;
+public interface Payload {
 
-@Immutable
-public class Payload {
+    /**
+     * Payload identifier.
+     * This key may be used as an ID in a database or a key in a {@code Map}.
+     *
+     * @return {@link String}
+     */
+    String getKey();
 
-    private Object generic;
+    /**
+     * Payload data.
+     * What this object is depends on the type of cache we're implementing.
+     *
+     * @return {@link Object}
+     */
+    Object getData();
 
-    public Payload() { }
-
-    public Payload(final Object generic) {
-        this.generic = generic;
-    }
-
-    public Object getGeneric() {
-        return generic;
-    }
 }

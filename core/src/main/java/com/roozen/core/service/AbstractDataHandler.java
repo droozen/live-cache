@@ -30,9 +30,22 @@ abstract class AbstractDataHandler implements DataHandler {
         return getAcceptedActions().contains(request.getAction());
     }
 
+
+    void send(final DataRequest request) {
+        service.getBroker().onNext(request);
+    }
+
+    void respond(final DataRequest request) {
+        request.getSource().onNext(request);
+    }
+
+    void markCaught(final DataRequest request) {
+        request.addStack(this.getClass().getSimpleName());
+    }
+
     void markHandled(final DataRequest request) {
-        final DataRequest handledRequest = new DataRequest(getHandled(), Action.HANDLED, request.getData());
-        request.getSource().onNext(handledRequest);
+        final DataRequest handledRequest = new DataRequest(getHandled(), Action.HANDLED, request.getPayload());
+        handledRequest.addStack(this.getClass().getSimpleName());
         getHandled().onNext(request);
     }
 

@@ -15,6 +15,11 @@ interface DataHandler {
 
     List<Action> getAcceptedActions();
 
+    /**
+     * This is the meat of the data handler.
+     *
+     * @param request {@link DataRequest}
+     */
     void handleDataRequest(DataRequest request);
 
 }
