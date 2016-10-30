@@ -1,74 +1,67 @@
 package com.roozen.core.service;
 
+import com.roozen.core.dto.Action;
 import com.roozen.core.dto.DataRequest;
 import org.junit.Before;
 import org.junit.Test;
-import rx.Subscription;
 import rx.subjects.PublishSubject;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DataServiceTest {
+public class DataServiceTest extends AbstractDataHandlerTest {
 
-    private DataRequestService service;
+    private PublishSubject<DataRequest> source = PublishSubject.create();
     private PublishSubject<DataRequest> broker;
-    private AtomicInteger numReceived;
+    private PublishSubject<DataRequest> handled;
+    private List<Action> acceptedActions;
 
     @Before
     public void init() {
-        service = new DataRequestService();
-        broker = service.getBroker();
-        numReceived = new AtomicInteger();
+        final DataService service = new DataService();
+        final DataRequestService dataRequestService = new DataRequestService();
+
+        service.service = dataRequestService;
+        broker = dataRequestService.getBroker();
+        handled = service.getHandled();
+        acceptedActions = service.getAcceptedActions();
+
+        service.init();
     }
 
     @Test
-    public void testBroker_justOne() {
-        final int expected = 1;
-        subscribe(numReceived);
+    public void testAcceptableRequestTypes() {
+        final AtomicInteger numHandled = subscribeToHandledAndAssertAccepted();
+        final AtomicInteger numReceived = subscribeToBrokerAndCountMessages();
 
-        broker.onNext(new DataRequest());
+        // EXECUTE
+        Arrays.stream(Action.values()).forEach(action -> broker.onNext(request(action)));
 
-        assertThat(numReceived.get()).isEqualTo(expected);
+        // VERIFY
+        assertThat(numReceived.get()).isEqualTo(Action.values().length);
+        assertThat(numHandled.get()).isEqualTo(2);
     }
 
-    @Test
-    public void testBroker_several() {
-        final int expected = 5;
-        subscribe(numReceived);
-
-        IntStream.range(0, expected).forEach(each -> broker.onNext(new DataRequest()));
-
-        assertThat(numReceived.get()).isEqualTo(expected);
+    @Override
+    protected PublishSubject<DataRequest> getHandled() {
+        return handled;
     }
 
-    @Test
-    public void testBroker_onlyNew() {
-        broker.onNext(new DataRequest());
-
-        final Subscription initialSubscription = subscribe(numReceived);
-        assertThat(numReceived.get()).isEqualTo(0);
-
-        sendAndAssert(2, 2);
-
-        final Subscription finalSubscription = subscribe(numReceived);
-        // 2 previous requests. 2 subscribers for 3 new requests. 8 total requests.
-        sendAndAssert(3, 8);
-
-        initialSubscription.unsubscribe();
-        // 8 previous requests. 1 subscriber for 1 new requests. 9 total requests.
-        sendAndAssert(1, 9);
+    @Override
+    protected PublishSubject<DataRequest> getBroker() {
+        return broker;
     }
 
-    private Subscription subscribe(final AtomicInteger numReceived) {
-        return broker.subscribe(request -> numReceived.getAndIncrement());
+    @Override
+    protected List<Action> getAcceptedActions() {
+        return acceptedActions;
     }
 
-    private void sendAndAssert(final int numToSend, final int numToAssert) {
-        IntStream.range(0, numToSend).forEach(each -> broker.onNext(new DataRequest()));
-        assertThat(numReceived.get()).isEqualTo(numToAssert);
+    @Override
+    protected PublishSubject<DataRequest> getSource() {
+        return source;
     }
-
 }

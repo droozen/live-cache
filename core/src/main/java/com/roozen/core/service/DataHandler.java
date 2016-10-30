@@ -17,18 +17,4 @@ interface DataHandler {
 
     void handleDataRequest(DataRequest request);
 
-    default String getErrorMessage() {
-        return String.format("Unexpected %s error.", this.getClass().getSimpleName());
-    }
-
-    default boolean filterForCache(final DataRequest request) {
-        return getAcceptedActions().contains(request.getAction());
-    }
-
-    default void markHandled(final DataRequest request) {
-        final DataRequest handledRequest = new DataRequest(getHandled(), Action.HANDLED, request.getData());
-        request.getSource().onNext(handledRequest);
-        getHandled().onNext(request);
-    }
-
 }

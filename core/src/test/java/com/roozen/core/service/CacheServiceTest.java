@@ -13,10 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CacheServiceTest {
-
-    private CacheService service;
-    private DataRequestService dataService;
+public class CacheServiceTest extends AbstractDataHandlerTest {
 
     private PublishSubject<DataRequest> source = PublishSubject.create();
     private PublishSubject<DataRequest> broker;
@@ -25,10 +22,11 @@ public class CacheServiceTest {
 
     @Before
     public void init() {
-        dataService = new DataRequestService();
-        service = new CacheService();
-        service.service = dataService;
-        broker = dataService.getBroker();
+        final CacheService service = new CacheService();
+        final DataRequestService dataRequestService = new DataRequestService();
+
+        service.service = dataRequestService;
+        broker = dataRequestService.getBroker();
         handled = service.getHandled();
         acceptedActions = service.getAcceptedActions();
 
@@ -40,29 +38,31 @@ public class CacheServiceTest {
         final AtomicInteger numHandled = subscribeToHandledAndAssertAccepted();
         final AtomicInteger numReceived = subscribeToBrokerAndCountMessages();
 
+        // EXECUTE
         Arrays.stream(Action.values()).forEach(action -> broker.onNext(request(action)));
 
+        // VERIFY
         assertThat(numReceived.get()).isEqualTo(Action.values().length);
         assertThat(numHandled.get()).isEqualTo(3);
     }
 
-    private AtomicInteger subscribeToHandledAndAssertAccepted() {
-        final AtomicInteger numHandled = new AtomicInteger();
-        handled.subscribe(request -> {
-            numHandled.getAndIncrement();
-            assertThat(acceptedActions).contains(request.getAction());
-        });
-        return numHandled;
+    @Override
+    protected PublishSubject<DataRequest> getHandled() {
+        return handled;
     }
 
-    private AtomicInteger subscribeToBrokerAndCountMessages() {
-        final AtomicInteger numReceived = new AtomicInteger();
-        broker.subscribe(request -> numReceived.getAndIncrement());
-        return numReceived;
+    @Override
+    protected PublishSubject<DataRequest> getBroker() {
+        return broker;
     }
 
-    private DataRequest request(final Action action) {
-        return new DataRequest(source, action, new Object());
+    @Override
+    protected List<Action> getAcceptedActions() {
+        return acceptedActions;
     }
 
+    @Override
+    protected PublishSubject<DataRequest> getSource() {
+        return source;
+    }
 }
