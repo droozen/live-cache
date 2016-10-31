@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import rx.subjects.PublishSubject;
 
 @Service
-public class DataRequestService {
+public class MasterService {
 
     private final PublishSubject<DataRequest> broker = PublishSubject.create();
 

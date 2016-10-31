@@ -22,7 +22,7 @@ public class WatcherServiceTest extends AbstractDataHandlerTest {
     @Before
     public void init() {
         final WatcherService service = new WatcherService();
-        final DataRequestService dataRequestService = new DataRequestService();
+        final MasterService dataRequestService = new MasterService();
 
         service.service = dataRequestService;
         broker = dataRequestService.getBroker();

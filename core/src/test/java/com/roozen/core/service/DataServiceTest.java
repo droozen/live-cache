@@ -22,7 +22,7 @@ public class DataServiceTest extends AbstractDataHandlerTest {
     @Before
     public void init() {
         final DataService service = new DataService();
-        final DataRequestService dataRequestService = new DataRequestService();
+        final MasterService dataRequestService = new MasterService();
 
         service.service = dataRequestService;
         broker = dataRequestService.getBroker();

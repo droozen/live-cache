@@ -22,7 +22,7 @@ public class CacheServiceTest extends AbstractDataHandlerTest {
     @Before
     public void init() {
         final CacheService service = new CacheService();
-        final DataRequestService dataRequestService = new DataRequestService();
+        final MasterService dataRequestService = new MasterService();
 
         service.service = dataRequestService;
         broker = dataRequestService.getBroker();

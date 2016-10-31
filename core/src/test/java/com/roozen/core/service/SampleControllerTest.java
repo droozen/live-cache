@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SampleControllerTest {
 
-    DataRequestService service;
+    MasterService service;
     CacheService cacheService;
     DataService dataService;
 
@@ -33,7 +33,7 @@ public class SampleControllerTest {
 
     @Before
     public void init() {
-        service = new DataRequestService();
+        service = new MasterService();
         cacheService = new CacheService();
         dataService = new DataService();
 

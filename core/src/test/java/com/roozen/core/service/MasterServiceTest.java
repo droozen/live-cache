@@ -11,15 +11,15 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DataRequestServiceTest {
+public class MasterServiceTest {
 
-    private DataRequestService service;
+    private MasterService service;
     private PublishSubject<DataRequest> broker;
     private AtomicInteger numReceived;
 
     @Before
     public void init() {
-        service = new DataRequestService();
+        service = new MasterService();
         broker = service.getBroker();
         numReceived = new AtomicInteger();
     }

@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 abstract class AbstractDataHandler implements DataHandler {
 
     @Autowired
-    DataRequestService service;
+    MasterService service;
 
     @PostConstruct
     void init() {
